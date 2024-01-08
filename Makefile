@@ -17,8 +17,14 @@ CFLAGS += -Werror -Iinclude -g
 LDLIBS += $(if $(or $(COVERAGE),$(DEBUG)), -g )
 LDLIBS += $(if $(COVERAGE), --coverage )
 
-test_kilo: LDLIBS += -lcmocka
-test_kilo: kilo.o test_kilo.o
+kilo: kilo.o
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
+
+test_%: %.o test_%.o
+	$(CC) $(CFLAGS) $^ -o test_$* -lcmocka
+
 
 .PHONY: test
 test: test_kilo
